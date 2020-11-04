@@ -2,10 +2,10 @@
 
 websocket + tls 更安全， 通过`docker-compose`启动，脚本简单易维护。
 
-- 配置参考了[新V2Ray白话文指南的WebSocket + TLS + Web](https://guide.v2fly.org/advanced/wss_and_web.html)，
-- [Caddy](https://hub.docker.com/_/caddy), [v2ray](https://hub.docker.com/r/v2fly/v2fly-core)全采用官方lastest镜像，性能可靠，安全易维护。
+- 配置参考了[新V2Ray白话文指南的WebSocket + TLS + Web](https://guide.v2fly.org/advanced/wss_and_web.html)
+- [Caddy](https://hub.docker.com/_/caddy), [v2ray](https://hub.docker.com/r/v2fly/v2fly-core)全采用官方lastest镜像，性能可靠，安全易维护
 - Caddy自动获取证书
-- 使用[Golang的模板引擎gomplate](https://docs.gomplate.ca/installing/#use-with-docker), 去渲染配置文件。
+- 使用[Golang的模板引擎gomplate](https://docs.gomplate.ca/installing/#use-with-docker), 去渲染配置文件
 
 前提准备：
 1.  有一台服务器，对外开放80，443端口，有一个域名解析到该服务器
@@ -13,18 +13,29 @@ websocket + tls 更安全， 通过`docker-compose`启动，脚本简单易维�
 
 ## 运行步骤
 
-1.  把`.env`文件里的DOMAIN变量改成你的域名
-2.  把`.env`文件里的UUID变量修改为新的随机数, 可以使用[Online UUID Generator](https://www.uuidgenerator.net/)
-3.  运行`gomplate.sh`脚本，把`templates`文件夹里的配置文件， 根据`.env`的变量，生成`Caddyfile`, `v2ray-server.json`, `v2ray-client.json`
-4.  在服务器， 运行`docker-compose up -d`, 启动`v2ray`和`caddy`服务。
-5.  在本地电脑， 运行`docker-compose -f docker-compose.client.yaml up -d`, 启动`v2ray-client`服务，本地socks代理端口`1080`和http代理端口`1081`。大功告成🚀
+1.  把`.env`文件里的`DOMAIN`变量改成你的域名
+2.  把`.env`文件里的`UUID`变量修改为新的随机数, [Online UUID Generator](https://www.uuidgenerator.net/)提供随机数，很方便。
+3.  运行`gomplate.sh`脚本，把`templates`文件夹里的配置文件， 根据`.env`文件的变量，生成`Caddyfile`, `v2ray-server.json`（v2ray服务端配置）, `v2ray-client.json`（v2ray客户端配置）
+4.  在服务器上， 运行`docker-compose up -d`, 启动`v2ray`和`caddy`服务。
+5.  在本地电脑上， 运行`docker-compose -f docker-compose.client.yaml up -d`, 启动`v2ray-client`服务，本地socks代理端口`1080`和http代理端口`1081`。大功告成🚀
 
 
->    注意区别：服务端的脚本是`docker-compose.yaml`, 客户端的脚本是`docker-compose.client.yaml`
+>    注意区别：服务端的脚本是`docker-compose.yaml`, 而客户端的脚本是`docker-compose.client.yaml`， 在运行客户端脚本时`docker-compose`需要用`-f`参数来指定文件名`docker-compose.client.yaml`。
 
 ## 模板渲染脚本简介
 
+[gomplate的一个简单用法，就是用环境变量来替换。](https://docs.gomplate.ca/usage/)。 举例：
+```
+$ echo "Hello, {{.Env.DOMAIN}}" | gomplate
+Hello, mydomain.me
+```
+
+这里采用gomplate的docker镜像，环境变量通过docker命令的`--env-file`参数， 把`.env`文件里的变量传进来。
+
+
 ## 服务端脚本简介
+
+在Caddy自动申请https证书中，letsencrypt的接口请求次数是有频率限制的，需要使用volumes存储卷来保存TLS证书等数据。[Caddy的docker hub文档提到这点。](https://hub.docker.com/_/caddy)
 
 Docker Compose启动：
 
