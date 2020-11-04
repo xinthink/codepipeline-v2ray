@@ -1,0 +1,11 @@
+.history
+
+# 涉及隐私的配置文件
+Caddyfile
+v2ray-server.json
+v2ray-client.json
+
+# 个人配置脚本
+.my.env
+my.gomplate.sh
+my.rsync.sh

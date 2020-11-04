@@ -1,0 +1,46 @@
+{
+  "inbounds": [{
+      "port": {{ .Env.SOCKS_PORT }},
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      }
+    },
+    {
+      "port": {{ .Env.HTTP_PORT }},
+      "protocol": "http",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      }
+    }
+  ],
+  "outbounds": [{
+    "protocol": "vmess",
+    "settings": {
+      "vnext": [{
+        "address": "{{ .Env.DOMAIN }}",
+        "port": 443,
+        "users": [{
+          "id": "{{ .Env.UUID }}",
+          "alterId": 64
+        }]
+      }]
+    },
+    "streamSettings": {
+      "network": "ws",
+      "security": "tls",
+      "wsSettings": {
+        "path": "{{ .Env.PATH }}"
+      }
+    },
+    "mux": {
+      "enabled": true
+    }
+  }]
+}
