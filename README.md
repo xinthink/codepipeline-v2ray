@@ -25,12 +25,18 @@ websocket + tls 更安全， 通过`docker-compose`启动，脚本简单易维�
 ## 模板渲染脚本简介
 
 gomplate的一个简单用法，就是用环境变量来替换, 举例：
-```
+```bash
 $ echo "Hello, {{.Env.DOMAIN}}" | gomplate
 Hello, mydomain.me
 ```
 
 这里采用gomplate的docker镜像，环境变量通过docker命令的`--env-file`参数， 把`.env`文件里的变量传进来。
+
+```bash
+docker run --rm --volume=${PWD}/templates:/in --volume=${PWD}:/out:rw \
+    --env-file ${PWD}/.env hairyhenderson/gomplate --input-dir=/in/ \
+    --output-map='/out/{{ .in | strings.ReplaceAll ".tmpl" "" }}' -V
+```
 
 [gomplate的使用文档链接](https://docs.gomplate.ca/usage/)
 
@@ -73,7 +79,10 @@ docker-compose -f docker-compose.client.yaml down
 或者执行以下docker命令
 
 ```bash
-docker run -d -p 1080:1080 -p 1081:1081 --volume=${PWD}/v2ray-client.json:/etc/v2ray/config.json --restart=unless-stopped --name=v2ray-client v2fly/v2fly-core v2ray --config=/etc/v2ray/config.json
+docker run -d -p 1080:1080 -p 1081:1081 \
+    --volume=${PWD}/v2ray-client.json:/etc/v2ray/config.json \
+    --restart=unless-stopped --name=v2ray-client  \
+    v2fly/v2fly-core v2ray --config=/etc/v2ray/config.json
 ```
 
 或者运行`start_client.sh`脚本，脚本内容就是上面的命令
