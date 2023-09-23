@@ -8,7 +8,7 @@
     curves x25519
   }
   @v2ray_websocket {
-    path {{ .Env.PATH }}
+    path {{ .Env.WS_PATH }}
     header Connection *Upgrade*
     header Upgrade websocket
   }
