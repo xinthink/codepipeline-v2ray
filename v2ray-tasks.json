@@ -1,0 +1,47 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "v2ray",
+            "image": "968220290494.dkr.ecr.us-west-2.amazonaws.com/v2ray:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 10000,
+                    "hostPort": 10000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/v2ray",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "ecs-v2ray"
+                }
+            }
+        }
+    ],
+    "family": "v2ray",
+    "executionRoleArn": "arn:aws:iam::968220290494:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "ARM64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "tags": []
+}
