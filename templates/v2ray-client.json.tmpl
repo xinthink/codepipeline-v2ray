@@ -28,7 +28,7 @@
         "port": 443,
         "users": [{
           "id": "{{ .Env.UUID }}",
-          "alterId": 64
+          "alterId": {{ .Env.ALTER_ID }}
         }]
       }]
     },
